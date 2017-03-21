@@ -9,12 +9,14 @@ using System.ComponentModel;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Data.Entity.ModelConfiguration;
 
 namespace InsulaWindowsForms
 {
     class Context : DbContext
     {
-        public Context() { }
+        public Context()
+        { }
 
         public DbSet<Patient> PatientSet { set; get; }
         public DbSet<Fact> FactSet { set; get; }
@@ -61,8 +63,18 @@ namespace InsulaWindowsForms
         public double Growth { get; set; }
         public virtual List<Fact> Facts { get; set; }
     }
-    
-    [Table("Fact")]
+
+    public class PatientMap : EntityTypeConfiguration<Patient>
+    {
+        public PatientMap()
+        {
+            this.ToTable("Patient");
+            this.HasKey(x => x.PatientId);
+            this.Property(x => x.Name);
+        }
+    }
+
+        [Table("Fact")]
     public class Fact
     {
         [Key]
@@ -105,6 +117,15 @@ namespace InsulaWindowsForms
             this.After = 0;
             this.InsXE = 0;
             this.InsGlu = 0;
+        }
+    }
+    public class FactMap : EntityTypeConfiguration<Fact>
+    {
+        public FactMap()
+        {
+            this.ToTable("Fact");
+            this.HasKey(x => x.FactId);
+            this.Property(x => x.DateTime);
         }
     }
 
