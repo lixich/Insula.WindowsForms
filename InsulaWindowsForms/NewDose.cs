@@ -44,7 +44,7 @@ namespace InsulaWindowsForms
                     double d1 = (Math.Abs(item.XE - XE)/(lst.Select(x => x.XE).Max() - lst.Select(x => x.XE).Min()));
                     double d2 = (Math.Abs(item.Before - before) / (lst.Select(x => x.Before).Max() - lst.Select(x => x.Before).Min()));
                     double d3 = (Math.Abs(item.After - after) / (lst.Select(x => x.After).Max() - lst.Select(x => x.After).Min()));
-                    double d4 = (Math.Min(Math.Abs((item.DateTime.Value.TimeOfDay - time).TotalMinutes), 24 * 60 - Math.Abs((item.DateTime.Value.TimeOfDay - time).TotalMinutes))) / (24 * 60);
+                    double d4 = (Math.Min(Math.Abs((item.DateTime.TimeOfDay - time).TotalMinutes), 24 * 60 - Math.Abs((item.DateTime.TimeOfDay - time).TotalMinutes))) / (24 * 60);
                     item.Coef = Math.Sqrt(d1*d1 + d2*d2 + d3*d3 + d4*d4);
                 }
                 lst = lst.OrderBy(x => x.Coef).ToList();
@@ -73,7 +73,7 @@ namespace InsulaWindowsForms
                 dataGridView1.Columns[5].Name = "Euclidean distance";
 
                 foreach (Fact f in lst)
-                   dataGridView1.Rows.Add(new string[] { f.DateTime.Value.TimeOfDay.ToString(), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), Math.Round(f.Coef,2).ToString() });
+                   dataGridView1.Rows.Add(new string[] { f.DateTime.TimeOfDay.ToString(), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), Math.Round(f.Coef,2).ToString() });
                 for (int i = 0; i < numNeighbors; i++)
                 {
                    dataGridView1.Rows[i].DefaultCellStyle.ForeColor = Color.Blue;

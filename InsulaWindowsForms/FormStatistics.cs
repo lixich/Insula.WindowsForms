@@ -38,14 +38,14 @@ namespace InsulaWindowsForms
             foreach (Fact f in p.Facts.ToList())
                 if ((f.After == 0) || (f.After == 0))
                 {
-                    dataGridViewAll.Rows.Add(new string[] { f.DateTime.Value.TimeOfDay.ToString().Substring(0, 8), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), f.InsXE != 0 ? f.InsXE.ToString() : "-", f.InsGlu != 0 ? f.InsGlu.ToString(): "-", "Error" });
+                    dataGridViewAll.Rows.Add(new string[] { f.DateTime.TimeOfDay.ToString().Substring(0, 8), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), f.InsXE != 0 ? f.InsXE.ToString() : "-", f.InsGlu != 0 ? f.InsGlu.ToString(): "-", "Error" });
                 }
                 else
                 {
                     if ((f.After > 8) || (f.After < 4))
-                        dataGridViewAll.Rows.Add(new string[] { f.DateTime.Value.TimeOfDay.ToString().Substring(0, 8), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), f.InsXE != 0 ? f.InsXE.ToString() : "-", f.InsGlu != 0 ? f.InsGlu.ToString() : "-", "Bad level of glucose" });
+                        dataGridViewAll.Rows.Add(new string[] { f.DateTime.TimeOfDay.ToString().Substring(0, 8), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), f.InsXE != 0 ? f.InsXE.ToString() : "-", f.InsGlu != 0 ? f.InsGlu.ToString() : "-", "Bad level of glucose" });
                     else
-                        dataGridViewAll.Rows.Add(new string[] { f.DateTime.Value.TimeOfDay.ToString().Substring(0, 8), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), f.InsXE != 0 ? f.InsXE.ToString() : "-", f.InsGlu != 0 ? f.InsGlu.ToString() : "-", "" });
+                        dataGridViewAll.Rows.Add(new string[] { f.DateTime.TimeOfDay.ToString().Substring(0, 8), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), f.InsXE != 0 ? f.InsXE.ToString() : "-", f.InsGlu != 0 ? f.InsGlu.ToString() : "-", "" });
                 }
             foreach (DataGridViewRow item in dataGridViewAll.Rows)
             {

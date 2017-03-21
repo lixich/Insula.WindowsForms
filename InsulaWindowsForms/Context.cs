@@ -2,47 +2,43 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SQLite;
 using System.ComponentModel;
-using SQLite.CodeFirst;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace InsulaWindowsForms
 {
-    /*
     class Context : DbContext
     {
-        public Context() : base("DbConnection")
-        { }
-        
+        public Context() { }
+
+        public DbSet<Patient> PatientSet { set; get; }
+        public DbSet<Fact> FactSet { set; get; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<Context>(modelBuilder);
-            Database.SetInitializer(sqliteConnectionInitializer);
+            // To remove the requests to the Migration History table
+            Database.SetInitializer<Context>(null);
+            // To remove the plural names
+            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            //For versions of EF before 6.0, uncomment the following line to remove calls to EdmTable, a metadata table
+            //modelBuilder.Conventions.Remove<IncludeMetadataConvention>();
         }
-        
-        public DbSet<Patient> PatientSet { get; set; }
-        public DbSet<Fact> FactSet { get; set; }
-
-    }*/
-
-    class Context : DbContext
-    {
-        public List<Patient> PatientSet = new List<Patient>();
-        public List<Fact> FactSet = new List<Fact>();
     }
+    
     [Table("Patient")]
     public class Patient
     {
         [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PatientId { get; set; }
         public string Name { get; set; }
         public string Insulin { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
   
         [NotMapped]
         public int Age
@@ -66,13 +62,13 @@ namespace InsulaWindowsForms
         public virtual List<Fact> Facts { get; set; }
     }
     
-    //[Table("Fact")]
+    [Table("Fact")]
     public class Fact
     {
         [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int FactId { get; set; }
-        public DateTime? DateTime { get; set; }
+        public DateTime DateTime { get; set; }
         public double XE { get; set; }
         public double Dose { get; set; }
         public double Before { get; set; }
