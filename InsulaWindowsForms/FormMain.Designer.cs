@@ -39,16 +39,20 @@
             this.newDoseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.labelName = new System.Windows.Forms.Label();
-            this.linkLabelName = new System.Windows.Forms.LinkLabel();
-            this.linkLabelAge = new System.Windows.Forms.LinkLabel();
-            this.labelAge = new System.Windows.Forms.Label();
-            this.linkLabelInsulin = new System.Windows.Forms.LinkLabel();
-            this.labelInsulin = new System.Windows.Forms.Label();
-            this.linkLabelWeight = new System.Windows.Forms.LinkLabel();
-            this.labelWeight = new System.Windows.Forms.Label();
             this.linkLabelGrowth = new System.Windows.Forms.LinkLabel();
             this.labelGrowth = new System.Windows.Forms.Label();
+            this.linkLabelWeight = new System.Windows.Forms.LinkLabel();
+            this.labelWeight = new System.Windows.Forms.Label();
+            this.linkLabelInsulin = new System.Windows.Forms.LinkLabel();
+            this.labelInsulin = new System.Windows.Forms.Label();
+            this.linkLabelAge = new System.Windows.Forms.LinkLabel();
+            this.labelAge = new System.Windows.Forms.Label();
+            this.linkLabelName = new System.Windows.Forms.LinkLabel();
+            this.labelName = new System.Windows.Forms.Label();
+            this.dataToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -76,7 +80,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.patientToolStripMenuItem,
-            this.dataToolStripMenuItem});
+            this.dataToolStripMenuItem,
+            this.dataToolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(284, 24);
@@ -120,8 +125,8 @@
             this.newDoseToolStripMenuItem,
             this.statisticsToolStripMenuItem});
             this.dataToolStripMenuItem.Name = "dataToolStripMenuItem";
-            this.dataToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
-            this.dataToolStripMenuItem.Text = "Data";
+            this.dataToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
+            this.dataToolStripMenuItem.Text = "Statistics";
             // 
             // newDoseToolStripMenuItem
             // 
@@ -134,7 +139,7 @@
             // 
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
             this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.statisticsToolStripMenuItem.Text = "Statistics";
+            this.statisticsToolStripMenuItem.Text = "Details";
             this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // panel1
@@ -153,82 +158,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(256, 182);
             this.panel1.TabIndex = 3;
-            // 
-            // labelName
-            // 
-            this.labelName.AutoSize = true;
-            this.labelName.Location = new System.Drawing.Point(4, 4);
-            this.labelName.Name = "labelName";
-            this.labelName.Size = new System.Drawing.Size(35, 13);
-            this.labelName.TabIndex = 0;
-            this.labelName.Text = "Name";
-            // 
-            // linkLabelName
-            // 
-            this.linkLabelName.AutoSize = true;
-            this.linkLabelName.Location = new System.Drawing.Point(4, 17);
-            this.linkLabelName.Name = "linkLabelName";
-            this.linkLabelName.Size = new System.Drawing.Size(77, 13);
-            this.linkLabelName.TabIndex = 1;
-            this.linkLabelName.TabStop = true;
-            this.linkLabelName.Text = "linkLabelName";
-            // 
-            // linkLabelAge
-            // 
-            this.linkLabelAge.AutoSize = true;
-            this.linkLabelAge.Location = new System.Drawing.Point(4, 48);
-            this.linkLabelAge.Name = "linkLabelAge";
-            this.linkLabelAge.Size = new System.Drawing.Size(68, 13);
-            this.linkLabelAge.TabIndex = 3;
-            this.linkLabelAge.TabStop = true;
-            this.linkLabelAge.Text = "linkLabelAge";
-            // 
-            // labelAge
-            // 
-            this.labelAge.AutoSize = true;
-            this.labelAge.Location = new System.Drawing.Point(4, 35);
-            this.labelAge.Name = "labelAge";
-            this.labelAge.Size = new System.Drawing.Size(26, 13);
-            this.labelAge.TabIndex = 2;
-            this.labelAge.Text = "Age";
-            // 
-            // linkLabelInsulin
-            // 
-            this.linkLabelInsulin.AutoSize = true;
-            this.linkLabelInsulin.Location = new System.Drawing.Point(4, 80);
-            this.linkLabelInsulin.Name = "linkLabelInsulin";
-            this.linkLabelInsulin.Size = new System.Drawing.Size(79, 13);
-            this.linkLabelInsulin.TabIndex = 5;
-            this.linkLabelInsulin.TabStop = true;
-            this.linkLabelInsulin.Text = "linkLabelInsulin";
-            // 
-            // labelInsulin
-            // 
-            this.labelInsulin.AutoSize = true;
-            this.labelInsulin.Location = new System.Drawing.Point(4, 67);
-            this.labelInsulin.Name = "labelInsulin";
-            this.labelInsulin.Size = new System.Drawing.Size(37, 13);
-            this.labelInsulin.TabIndex = 4;
-            this.labelInsulin.Text = "Insulin";
-            // 
-            // linkLabelWeight
-            // 
-            this.linkLabelWeight.AutoSize = true;
-            this.linkLabelWeight.Location = new System.Drawing.Point(4, 112);
-            this.linkLabelWeight.Name = "linkLabelWeight";
-            this.linkLabelWeight.Size = new System.Drawing.Size(83, 13);
-            this.linkLabelWeight.TabIndex = 7;
-            this.linkLabelWeight.TabStop = true;
-            this.linkLabelWeight.Text = "linkLabelWeight";
-            // 
-            // labelWeight
-            // 
-            this.labelWeight.AutoSize = true;
-            this.labelWeight.Location = new System.Drawing.Point(4, 99);
-            this.labelWeight.Name = "labelWeight";
-            this.labelWeight.Size = new System.Drawing.Size(41, 13);
-            this.labelWeight.TabIndex = 6;
-            this.labelWeight.Text = "Weight";
             // 
             // linkLabelGrowth
             // 
@@ -249,6 +178,113 @@
             this.labelGrowth.TabIndex = 8;
             this.labelGrowth.Text = "Growth";
             // 
+            // linkLabelWeight
+            // 
+            this.linkLabelWeight.AutoSize = true;
+            this.linkLabelWeight.Location = new System.Drawing.Point(4, 112);
+            this.linkLabelWeight.Name = "linkLabelWeight";
+            this.linkLabelWeight.Size = new System.Drawing.Size(83, 13);
+            this.linkLabelWeight.TabIndex = 7;
+            this.linkLabelWeight.TabStop = true;
+            this.linkLabelWeight.Text = "linkLabelWeight";
+            // 
+            // labelWeight
+            // 
+            this.labelWeight.AutoSize = true;
+            this.labelWeight.Location = new System.Drawing.Point(4, 99);
+            this.labelWeight.Name = "labelWeight";
+            this.labelWeight.Size = new System.Drawing.Size(41, 13);
+            this.labelWeight.TabIndex = 6;
+            this.labelWeight.Text = "Weight";
+            // 
+            // linkLabelInsulin
+            // 
+            this.linkLabelInsulin.AutoSize = true;
+            this.linkLabelInsulin.Location = new System.Drawing.Point(4, 80);
+            this.linkLabelInsulin.Name = "linkLabelInsulin";
+            this.linkLabelInsulin.Size = new System.Drawing.Size(79, 13);
+            this.linkLabelInsulin.TabIndex = 5;
+            this.linkLabelInsulin.TabStop = true;
+            this.linkLabelInsulin.Text = "linkLabelInsulin";
+            // 
+            // labelInsulin
+            // 
+            this.labelInsulin.AutoSize = true;
+            this.labelInsulin.Location = new System.Drawing.Point(4, 67);
+            this.labelInsulin.Name = "labelInsulin";
+            this.labelInsulin.Size = new System.Drawing.Size(37, 13);
+            this.labelInsulin.TabIndex = 4;
+            this.labelInsulin.Text = "Insulin";
+            // 
+            // linkLabelAge
+            // 
+            this.linkLabelAge.AutoSize = true;
+            this.linkLabelAge.Location = new System.Drawing.Point(4, 48);
+            this.linkLabelAge.Name = "linkLabelAge";
+            this.linkLabelAge.Size = new System.Drawing.Size(68, 13);
+            this.linkLabelAge.TabIndex = 3;
+            this.linkLabelAge.TabStop = true;
+            this.linkLabelAge.Text = "linkLabelAge";
+            // 
+            // labelAge
+            // 
+            this.labelAge.AutoSize = true;
+            this.labelAge.Location = new System.Drawing.Point(4, 35);
+            this.labelAge.Name = "labelAge";
+            this.labelAge.Size = new System.Drawing.Size(26, 13);
+            this.labelAge.TabIndex = 2;
+            this.labelAge.Text = "Age";
+            // 
+            // linkLabelName
+            // 
+            this.linkLabelName.AutoSize = true;
+            this.linkLabelName.Location = new System.Drawing.Point(4, 17);
+            this.linkLabelName.Name = "linkLabelName";
+            this.linkLabelName.Size = new System.Drawing.Size(77, 13);
+            this.linkLabelName.TabIndex = 1;
+            this.linkLabelName.TabStop = true;
+            this.linkLabelName.Text = "linkLabelName";
+            // 
+            // labelName
+            // 
+            this.labelName.AutoSize = true;
+            this.labelName.Location = new System.Drawing.Point(4, 4);
+            this.labelName.Name = "labelName";
+            this.labelName.Size = new System.Drawing.Size(35, 13);
+            this.labelName.TabIndex = 0;
+            this.labelName.Text = "Name";
+            // 
+            // dataToolStripMenuItem1
+            // 
+            this.dataToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem});
+            this.dataToolStripMenuItem1.Name = "dataToolStripMenuItem1";
+            this.dataToolStripMenuItem1.Size = new System.Drawing.Size(43, 20);
+            this.dataToolStripMenuItem1.Text = "Data";
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Text = "SaveAs";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -261,6 +297,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
             this.Text = "Insula";
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -293,6 +330,10 @@
         private System.Windows.Forms.Label labelInsulin;
         private System.Windows.Forms.LinkLabel linkLabelAge;
         private System.Windows.Forms.Label labelAge;
+        private System.Windows.Forms.ToolStripMenuItem dataToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
     }
 }
 

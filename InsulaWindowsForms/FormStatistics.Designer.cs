@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.dataGridViewAll = new System.Windows.Forms.DataGridView();
-            this.chartXE = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.chartGlucose = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart2D = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart3D = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.comboBoxXE = new System.Windows.Forms.ComboBox();
             this.comboBoxGlucose = new System.Windows.Forms.ComboBox();
             this.trackBarGlucose = new System.Windows.Forms.TrackBar();
@@ -42,8 +42,8 @@
             this.trackBarXE = new System.Windows.Forms.TrackBar();
             this.labelXE = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAll)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chartXE)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chartGlucose)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart2D)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart3D)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarGlucose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarXE)).BeginInit();
             this.SuspendLayout();
@@ -52,7 +52,8 @@
             // 
             this.dataGridViewAll.AllowUserToAddRows = false;
             this.dataGridViewAll.AllowUserToDeleteRows = false;
-            this.dataGridViewAll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridViewAll.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewAll.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewAll.Location = new System.Drawing.Point(728, 39);
@@ -61,29 +62,32 @@
             this.dataGridViewAll.Size = new System.Drawing.Size(595, 625);
             this.dataGridViewAll.TabIndex = 0;
             // 
-            // chartXE
+            // chart2D
             // 
-            chartArea5.Name = "ChartArea1";
-            this.chartXE.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chartXE.Legends.Add(legend5);
-            this.chartXE.Location = new System.Drawing.Point(12, 39);
-            this.chartXE.Name = "chartXE";
-            this.chartXE.Size = new System.Drawing.Size(622, 290);
-            this.chartXE.TabIndex = 1;
-            this.chartXE.Text = "chartXE";
+            chartArea1.Name = "ChartArea1";
+            this.chart2D.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart2D.Legends.Add(legend1);
+            this.chart2D.Location = new System.Drawing.Point(12, 39);
+            this.chart2D.Name = "chart2D";
+            this.chart2D.Size = new System.Drawing.Size(622, 290);
+            this.chart2D.TabIndex = 1;
+            this.chart2D.Text = "chart2D";
             // 
-            // chartGlucose
+            // chart3D
             // 
-            chartArea6.Name = "ChartArea1";
-            this.chartGlucose.ChartAreas.Add(chartArea6);
-            legend6.Name = "Legend1";
-            this.chartGlucose.Legends.Add(legend6);
-            this.chartGlucose.Location = new System.Drawing.Point(12, 374);
-            this.chartGlucose.Name = "chartGlucose";
-            this.chartGlucose.Size = new System.Drawing.Size(622, 290);
-            this.chartGlucose.TabIndex = 2;
-            this.chartGlucose.Text = "chartXE";
+            chartArea2.Area3DStyle.Enable3D = true;
+            chartArea2.Area3DStyle.WallWidth = 10;
+            chartArea2.Name = "ChartArea1";
+            this.chart3D.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart3D.Legends.Add(legend2);
+            this.chart3D.Location = new System.Drawing.Point(12, 374);
+            this.chart3D.Name = "chart3D";
+            this.chart3D.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
+            this.chart3D.Size = new System.Drawing.Size(622, 290);
+            this.chart3D.TabIndex = 2;
+            this.chart3D.Text = "chart3D";
             // 
             // comboBoxXE
             // 
@@ -91,10 +95,11 @@
             this.comboBoxXE.FormattingEnabled = true;
             this.comboBoxXE.Items.AddRange(new object[] {
             "Insulin dose for 1 XE",
-            "XE"});
+            "Insulin dose to lower glucose by 1 mmol/L",
+            "Dose"});
             this.comboBoxXE.Location = new System.Drawing.Point(12, 12);
             this.comboBoxXE.Name = "comboBoxXE";
-            this.comboBoxXE.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxXE.Size = new System.Drawing.Size(231, 21);
             this.comboBoxXE.TabIndex = 3;
             this.comboBoxXE.SelectedIndexChanged += new System.EventHandler(this.comboBoxXE_SelectedIndexChanged);
             // 
@@ -103,17 +108,17 @@
             this.comboBoxGlucose.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxGlucose.FormattingEnabled = true;
             this.comboBoxGlucose.Items.AddRange(new object[] {
-            "Insulin dose to lower glucose by 1 mmol/L",
-            "Glucose"});
+            "Insulin dose for 1 XE",
+            "Dose"});
             this.comboBoxGlucose.Location = new System.Drawing.Point(10, 347);
             this.comboBoxGlucose.Name = "comboBoxGlucose";
-            this.comboBoxGlucose.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxGlucose.Size = new System.Drawing.Size(233, 21);
             this.comboBoxGlucose.TabIndex = 4;
             this.comboBoxGlucose.SelectedIndexChanged += new System.EventHandler(this.comboBoxGlucose_SelectedIndexChanged);
             // 
             // trackBarGlucose
             // 
-            this.trackBarGlucose.Location = new System.Drawing.Point(640, 374);
+            this.trackBarGlucose.Location = new System.Drawing.Point(640, 63);
             this.trackBarGlucose.Maximum = 25;
             this.trackBarGlucose.Minimum = 6;
             this.trackBarGlucose.Name = "trackBarGlucose";
@@ -126,7 +131,7 @@
             // labelGlucose
             // 
             this.labelGlucose.AutoSize = true;
-            this.labelGlucose.Location = new System.Drawing.Point(637, 350);
+            this.labelGlucose.Location = new System.Drawing.Point(637, 39);
             this.labelGlucose.Name = "labelGlucose";
             this.labelGlucose.Size = new System.Drawing.Size(46, 13);
             this.labelGlucose.TabIndex = 6;
@@ -134,7 +139,7 @@
             // 
             // trackBarXE
             // 
-            this.trackBarXE.Location = new System.Drawing.Point(640, 518);
+            this.trackBarXE.Location = new System.Drawing.Point(640, 207);
             this.trackBarXE.Maximum = 15;
             this.trackBarXE.Name = "trackBarXE";
             this.trackBarXE.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -146,7 +151,7 @@
             // labelXE
             // 
             this.labelXE.AutoSize = true;
-            this.labelXE.Location = new System.Drawing.Point(637, 494);
+            this.labelXE.Location = new System.Drawing.Point(637, 183);
             this.labelXE.Name = "labelXE";
             this.labelXE.Size = new System.Drawing.Size(21, 13);
             this.labelXE.TabIndex = 8;
@@ -163,14 +168,14 @@
             this.Controls.Add(this.trackBarGlucose);
             this.Controls.Add(this.comboBoxGlucose);
             this.Controls.Add(this.comboBoxXE);
-            this.Controls.Add(this.chartGlucose);
-            this.Controls.Add(this.chartXE);
+            this.Controls.Add(this.chart3D);
+            this.Controls.Add(this.chart2D);
             this.Controls.Add(this.dataGridViewAll);
             this.Name = "FormStatistics";
             this.Text = "Statistics";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAll)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chartXE)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chartGlucose)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart2D)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart3D)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarGlucose)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarXE)).EndInit();
             this.ResumeLayout(false);
@@ -181,8 +186,8 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridViewAll;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chartXE;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chartGlucose;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart2D;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart3D;
         private System.Windows.Forms.ComboBox comboBoxXE;
         private System.Windows.Forms.ComboBox comboBoxGlucose;
         private System.Windows.Forms.TrackBar trackBarGlucose;

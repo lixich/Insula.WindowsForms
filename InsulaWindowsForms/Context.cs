@@ -10,9 +10,11 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.Entity.ModelConfiguration;
+using System.Runtime.Serialization;
 
 namespace InsulaWindowsForms
 {
+    /*
     class Context : DbContext
     {
         public Context()
@@ -31,17 +33,23 @@ namespace InsulaWindowsForms
             //modelBuilder.Conventions.Remove<IncludeMetadataConvention>();
         }
     }
-    
-    [Table("Patient")]
+    */
+    [Serializable()]
+    [DataContract]
+    //[Table("Patient")]
     public class Patient
     {
+        /*
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PatientId { get; set; }
+        public int PatientId { get; set; }*/
+        [DataMember]
         public string Name { get; set; }
+        [DataMember]
         public string Insulin { get; set; }
+        [DataMember]
         public DateTime DateOfBirth { get; set; }
-  
+
         [NotMapped]
         public int Age
         {
@@ -56,41 +64,51 @@ namespace InsulaWindowsForms
                 {
                     return 0;
                 }
-          
+
             }
         }
+        [DataMember]
         public double Weight { get; set; }
+        [DataMember]
         public double Growth { get; set; }
-        public virtual List<Fact> Facts { get; set; }
+        [DataMember]
+        public List<Fact> Facts { get; set; }
     }
 
-    public class PatientMap : EntityTypeConfiguration<Patient>
-    {
-        public PatientMap()
-        {
-            this.ToTable("Patient");
-            this.HasKey(x => x.PatientId);
-            this.Property(x => x.Name);
-        }
-    }
-
-        [Table("Fact")]
+    [Serializable()]
+    [DataContract]
+    //[Table("Fact")]
     public class Fact
     {
+        /*
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int FactId { get; set; }
+        public int FactId { get; set; }*/
+        [DataMember]
         public DateTime DateTime { get; set; }
+        [DataMember]
         public double XE { get; set; }
+        [DataMember]
         public double Dose { get; set; }
+        [DataMember]
         public double Before { get; set; }
+        [DataMember]
         public double After { get; set; }
+        [DataMember]
         public double InsXE { get; set; }
+        [DataMember]
         public double InsGlu { get; set; }
+        [DataMember]
         public double Time { get; set; }
         [NotMapped]
         public double Coef { get; set; }
-        public virtual Patient Patient { get; set; }
+        /*[DataMember]
+        public virtual Patient Patient { get; set; }*/
+
+        public Fact()
+        {
+
+        }
 
         public Fact(DateTime _DateTime, double _Dose, double _XE, double _Before, double _After)
         {
@@ -117,15 +135,6 @@ namespace InsulaWindowsForms
             this.After = 0;
             this.InsXE = 0;
             this.InsGlu = 0;
-        }
-    }
-    public class FactMap : EntityTypeConfiguration<Fact>
-    {
-        public FactMap()
-        {
-            this.ToTable("Fact");
-            this.HasKey(x => x.FactId);
-            this.Property(x => x.DateTime);
         }
     }
 
