@@ -99,6 +99,8 @@ namespace InsulaWindowsForms
                 List<Fact> goodFacts = lst.Where(x => x.DifferenceInGlucose.HasValue && Math.Abs(x.DifferenceInGlucose.Value) < 2).ToList();
                 List<Fact> badFacts = lst.Where(x => x.DifferenceInGlucose.HasValue && Math.Abs(x.DifferenceInGlucose.Value) >= 1).ToList();
                 
+                ///Коэффицент углевдов
+
                 foreach (var item in goodFacts)
                     if (item.XE != 0)
                         item.InsXE = Math.Round(item.Dose / item.XE, 4);
@@ -111,10 +113,6 @@ namespace InsulaWindowsForms
 
                 Func<double, double> lineXE = Fit.LineFunc(xdataXE, ydataXE);
                 double goodnessLineXE = GoodnessOfFit.RSquared(xdataXE.Select(x => lineXE(x)), ydataXE);
-
-
-                Func<double, double> polynomOrder2XE = Fit.PolynomialFunc(xdataXE, ydataXE, 2); // polynomial of order 2
-                double goodnessPolynomOrder2XE = GoodnessOfFit.RSquared(xdataXE.Select(x => polynomOrder2XE(x)), ydataXE);
 
                 Func<double, double> polynomOrder3XE = Fit.PolynomialFunc(xdataXE, ydataXE, 3); // polynomial of order 3
                 double goodnessPolynomOrder3XE = GoodnessOfFit.RSquared(xdataXE.Select(x => polynomOrder3XE(x)), ydataXE);
@@ -133,11 +131,77 @@ namespace InsulaWindowsForms
                 double goodnessHarmonicCombinationXE = GoodnessOfFit.RSquared(xdataXE.Select(x => sinusoidalCombinationXE(x)), ydataXE);
 
                 double exampleLXE = lineXE(13.0);
-                double exampleP2XE = polynomOrder2XE(13.0);
                 double exampleP3XE = polynomOrder3XE(13.0);
                 double exampleLCXE = sinusoidalCombinationXE(13.0);
                 double exampleNCXE = harmonicCombinationXE(13.0);
 
+
+                ////Чувствительность к инсулину
+
+                badFacts = lst.Where(x => x.DifferenceInGlucose.HasValue && Math.Abs(x.DifferenceInGlucose.Value) >= 1).ToList();
+                foreach (var item in badFacts)
+                {
+                    //if (item.Before > item.After)
+                    if (item.Before - item.After != 0)
+                    {
+                        item.InsGlu = Math.Round((item.Dose - (lineXE(item.Time) * item.XE)) / (item.Before - item.After), 4);
+                    }
+                }
+                badFacts = badFacts.Where(x => x.InsGlu > 0).ToList();
+                double[] xdataGlucose = badFacts.Select(x => x.Time).ToArray();
+                double[] ydataGlucose = badFacts.Select(x => x.InsGlu).ToArray();
+                double[] zdataGlucose = badFacts.Select(x => x.XE).ToArray();
+                Func<double, double> lineGlucose = Fit.LineFunc(xdataGlucose, ydataGlucose);
+                double goodnessLineGlucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => lineGlucose(x)), ydataGlucose);
+
+
+
+
+
+                badFacts = lst.Where(x => x.DifferenceInGlucose.HasValue && Math.Abs(x.DifferenceInGlucose.Value) >= 1).ToList();
+                foreach (var item in badFacts)
+                {
+                    //if (item.Before > item.After)
+                    if (item.Before - item.After != 0)
+                    {
+                        item.InsGlu = Math.Round((item.Dose - (polynomOrder3XE(item.Time) * item.XE)) / (item.Before - item.After), 4);
+                    }
+                }
+                badFacts = badFacts.Where(x => x.InsGlu > 0).ToList();
+                xdataGlucose = badFacts.Select(x => x.Time).ToArray();
+                ydataGlucose = badFacts.Select(x => x.InsGlu).ToArray();
+                zdataGlucose = badFacts.Select(x => x.XE).ToArray();
+                Func<double, double> polynomOrder3Glucose = Fit.PolynomialFunc(xdataGlucose, ydataGlucose, 3); // polynomial of order 3
+                double goodnessPolynomOrder3Glucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => polynomOrder3Glucose(x)), ydataGlucose);
+
+
+
+                badFacts = lst.Where(x => x.DifferenceInGlucose.HasValue && Math.Abs(x.DifferenceInGlucose.Value) >= 1).ToList();
+                foreach (var item in badFacts)
+                {
+                    //if (item.Before > item.After)
+                    if (item.Before - item.After != 0)
+                    {
+                        item.InsGlu = Math.Round((item.Dose - (sinusoidalCombinationXE(item.Time) * item.XE)) / (item.Before - item.After), 4);
+                    }
+                }
+                badFacts = badFacts.Where(x => x.InsGlu > 0).ToList();
+                xdataGlucose = badFacts.Select(x => x.Time).ToArray();
+                ydataGlucose = badFacts.Select(x => x.InsGlu).ToArray();
+                zdataGlucose = badFacts.Select(x => x.XE).ToArray();
+                Func<double, double> sinusoidalCombinationGlucose = Fit.LinearCombinationFunc(
+                xdataGlucose,
+                ydataGlucose,
+                x => 1.0,
+                x => Math.Sin(omega * x),
+                x => Math.Cos(omega * x));
+                double goodnessSinusoidalCombinationGlucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => sinusoidalCombinationGlucose(x)), ydataGlucose);
+
+                
+
+
+
+                badFacts = lst.Where(x => x.DifferenceInGlucose.HasValue && Math.Abs(x.DifferenceInGlucose.Value) >= 1).ToList();
                 foreach (var item in badFacts)
                 {
                     //if (item.Before > item.After)
@@ -147,29 +211,9 @@ namespace InsulaWindowsForms
                     }
                 }
                 badFacts = badFacts.Where(x => x.InsGlu > 0).ToList();
-
-
-                double[] xdataGlucose = badFacts.Select(x => x.Time).ToArray();
-                double[] ydataGlucose = badFacts.Select(x => x.InsGlu).ToArray();
-                double[] zdataGlucose = badFacts.Select(x => x.XE).ToArray();
-
-                Func<double, double> lineGlucose = Fit.LineFunc(xdataGlucose, ydataGlucose);
-                double goodnessLineGlucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => lineGlucose(x)), ydataGlucose);
-
-                Func<double, double> polynomOrder2Glucose = Fit.PolynomialFunc(xdataGlucose, ydataGlucose, 2); // polynomial of order 2
-                double goodnessPolynomOrder2Glucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => polynomOrder2Glucose(x)), ydataGlucose);
-
-                Func<double, double> polynomOrder3Glucose = Fit.PolynomialFunc(xdataGlucose, ydataGlucose, 3); // polynomial of order 3
-                double goodnessPolynomOrder3Glucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => polynomOrder3Glucose(x)), ydataGlucose);
-
-                Func<double, double> sinusoidalCombinationGlucose = Fit.LinearCombinationFunc(
-                xdataGlucose,
-                ydataGlucose,
-                x => 1.0,
-                x => Math.Sin(omega * x),
-                x => Math.Cos(omega * x));
-                double goodnessSinusoidalCombinationGlucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => sinusoidalCombinationGlucose(x)), ydataGlucose);
-
+                xdataGlucose = badFacts.Select(x => x.Time).ToArray();
+                ydataGlucose = badFacts.Select(x => x.InsGlu).ToArray();
+                zdataGlucose = badFacts.Select(x => x.XE).ToArray();
                 Func<double, double> harmonicCombinationGlucose = Fit.LinearCombinationFunc(
                 xdataGlucose,
                 ydataGlucose,
@@ -178,9 +222,11 @@ namespace InsulaWindowsForms
                 x => SpecialFunctions.GeneralHarmonic(10, Math.Cos(omega * x)));
                 double goodnessHarmonicCombinationGlucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => harmonicCombinationGlucose(x)), ydataGlucose);
 
+
+
+
                 //пример
                 double exampleLGlucose = lineGlucose(13.0);
-                double exampleP2Glucose = polynomOrder2Glucose(13.0);
                 double exampleP3Glucose = polynomOrder3Glucose(13.0);
                 double exampleLCGlucose = sinusoidalCombinationGlucose(13.0);
                 double exampleHCGlucose = harmonicCombinationGlucose(13.0);
@@ -191,7 +237,6 @@ namespace InsulaWindowsForms
                 //double nowInsulin = ?;
 
                 double exampleLFull = lineXE(nowTime) * nowXE + (nowGlu - 6) * lineGlucose(nowTime);
-                double exampleP2Full = polynomOrder2XE(nowTime) * nowXE + (nowGlu - 6) * polynomOrder2Glucose(nowTime);
                 double exampleP3Full = polynomOrder3XE(nowTime) * nowXE + (nowGlu - 6) * polynomOrder3Glucose(nowTime);
                 double exampleLCFull = sinusoidalCombinationXE(nowTime) * nowXE + (nowGlu - 6) * sinusoidalCombinationGlucose(nowTime);
                 double exampleHCFull = harmonicCombinationXE(nowTime) * nowXE + (nowGlu - 6) * harmonicCombinationGlucose(nowTime);
@@ -370,11 +415,11 @@ namespace InsulaWindowsForms
                 d => d[1],
                 d => d[0] * d[0],
                 d => d[1] * d[1],
-                d => d[0] * d[1]);/*
+                d => d[0] * d[1],
                 d => d[0] * d[0] * d[0],
                 d => d[1] * d[1] * d[1],
                 d => d[0] * d[0] * d[1],
-                d => d[0] * d[1] * d[1]);*/
+                d => d[0] * d[1] * d[1]);
                 double goodnessLinearMultiDimFunc = GoodnessOfFit.RSquared(lst.Select(x => linearMultiDimFunc(new[] { x.DifferenceInGlucose.Value, x.XE })).ToArray(), lst.Select(x => x.Dose).ToArray());
 
                 Func<Double[], double> linearMultiDimFuncTimeHarmonic = Fit.LinearMultiDimFunc(xykjData, zData,
@@ -439,6 +484,7 @@ namespace InsulaWindowsForms
                 int successDirectLinearMultiDimFuncTimeHarmonic = 0;
                 int successDirectLinearMultiDimFuncTimeHarmonicBefore = 0;
                 int successDirectRegressionMethod = 0;
+                int successLog = 0;
                 int successPull = 0;
 
 
@@ -451,6 +497,7 @@ namespace InsulaWindowsForms
                 List<double> sumDirectLinearMultiDimFuncTimeHarmonic = new List<double>();
                 List<double> sumDirectLinearMultiDimFuncTimeHarmonicBefore = new List<double>();
                 List<double> sumDirectRegressionMethod = new List<double>();
+                List<double> sumLog = new List<double>();
                 List<double> sumPull = new List<double>();
 
                 int g = 0;
@@ -538,6 +585,14 @@ namespace InsulaWindowsForms
                     if (((int)examplePull == item.Dose) || ((int)examplePull + 1 == item.Dose))
                     //if ((int)examplePull == item.Dose)
                         successPull++;
+
+                    //examplePull += log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before });
+                    sumLog.Add(Math.Abs(item.Dose - (log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }))));
+                    int exampleLog = (int)Math.Round(log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }), 0);
+                    //int exampleLog = (int)Math.Truncate(log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }));
+                    if (exampleLog == item.Dose)
+                        //if ((exampleLog == item.Dose) || (exampleLog + 1 == item.Dose))
+                        successLog++;
                 }
 
                 int k = lst.Count;
@@ -551,7 +606,21 @@ namespace InsulaWindowsForms
                 double devDirectLinearMultiDimFuncTimeHarmonic = Statistics.StandardDeviation(sumDirectLinearMultiDimFuncTimeHarmonic);
                 double devDirectLinearMultiDimFuncTimeHarmonicBefore = Statistics.StandardDeviation(sumDirectLinearMultiDimFuncTimeHarmonicBefore);
                 double devDirectRegressionMethod = Statistics.StandardDeviation(sumDirectRegressionMethod);
+                double devLog = Statistics.StandardDeviation(sumLog);
                 double devPull = Statistics.StandardDeviation(sumPull);
+
+                double aveKNN = sumKNN.Average();
+                double aveLine = sumLine.Average();
+                double avePolynom = sumPolynom.Average();
+                double aveSinusoidal = sumSinusoidal.Average();
+                double aveHarmonic = sumHarmonic.Average();
+                double aveDirectLinearMultiDimFunc = sumDirectLinearMultiDimFunc.Average();
+                double aveDirectLinearMultiDimFuncTimeSin = sumDirectLinearMultiDimFuncTimeSin.Average();
+                double aveDirectLinearMultiDimFuncTimeHarmonic = sumDirectLinearMultiDimFuncTimeHarmonic.Average();
+                double aveDirectLinearMultiDimFuncTimeHarmonicBefore = sumDirectLinearMultiDimFuncTimeHarmonicBefore.Average();
+                double aveDirectRegressionMethod = sumDirectRegressionMethod.Average();
+                double aveLog = sumLog.Average();
+                double avePull = sumPull.Average();
 
                 double normaKNN = 0;
                 double normaLine = 0;
@@ -563,6 +632,7 @@ namespace InsulaWindowsForms
                 double normaDirectLinearMultiDimFuncTimeHarmonic = 0;
                 double normaDirectLinearMultiDimFuncTimeHarmonicBefore = 0;
                 double normaDirectRegressionMethod = 0;
+                double normaLog = 0;
                 double normaPull = 0;
 
                 for (int i = 0; i < k; i++)
@@ -578,6 +648,7 @@ namespace InsulaWindowsForms
                     normaDirectLinearMultiDimFuncTimeHarmonic += sumDirectLinearMultiDimFuncTimeHarmonic[i] / lst[i].Dose;
                     normaDirectLinearMultiDimFuncTimeHarmonicBefore += sumDirectLinearMultiDimFuncTimeHarmonicBefore[i] / lst[i].Dose;
                     normaDirectRegressionMethod += sumDirectRegressionMethod[i] / lst[i].Dose;
+                    normaLog += sumLog[i] / lst[i].Dose; 
                     normaPull += sumPull[i] / lst[i].Dose; 
                 }
 
@@ -591,6 +662,7 @@ namespace InsulaWindowsForms
                 normaDirectLinearMultiDimFuncTimeHarmonic /= k;
                 normaDirectLinearMultiDimFuncTimeHarmonicBefore /= k;
                 normaDirectRegressionMethod /= k;
+                normaLog /= k;
                 normaPull /= k;
 
                 double example = harmonicCombinationXE(time.TotalMinutes/60) * XE + (before - after) * harmonicCombinationGlucose(time.TotalMinutes / 60);
