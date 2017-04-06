@@ -104,7 +104,17 @@ namespace InsulaWindowsForms
         public double Coef { get; set; }
         /*[DataMember]
         public virtual Patient Patient { get; set; }*/
+        public double? DifferenceInGlucose
+        {
+            get
+            {
+                if ((After != 0) && (Before != 0))
+                    return After - Before;
+                else
+                    return null;
 
+            }
+        }
         public Fact()
         {
 
@@ -113,7 +123,7 @@ namespace InsulaWindowsForms
         public Fact(DateTime _DateTime, double _Dose, double _XE, double _Before, double _After)
         {
             this.DateTime = _DateTime;
-            this.Time = _DateTime.TimeOfDay.TotalMinutes / 60;
+            this.Time = Math.Round(_DateTime.TimeOfDay.TotalMinutes / 60);
             this.XE = _XE;
             this.Dose = _Dose;
             this.Before = _Before;
@@ -128,7 +138,7 @@ namespace InsulaWindowsForms
         public Fact(DateTime _DateTime, double _Dose, double _XE, double _Before)
         {
             this.DateTime = _DateTime;
-            this.Time = _DateTime.TimeOfDay.TotalMinutes / 60;
+            this.Time = Math.Round(_DateTime.TimeOfDay.TotalMinutes / 60);
             this.XE = _XE;
             this.Dose = _Dose;
             this.Before = _Before;
