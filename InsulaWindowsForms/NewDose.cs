@@ -16,10 +16,12 @@ namespace InsulaWindowsForms
     public partial class NewDose : Form
     {
         List<Fact> lstAll = new List<Fact>();
+        Patient patient = new Patient();
 
         public NewDose(Patient p)
         {
             InitializeComponent();
+            patient = p;
             lstAll = p.Facts.Where(x => x.DifferenceInGlucose.HasValue).ToList();
             tbTime.Text = DateTime.Now.TimeOfDay.ToString();
             numCurrentGlucose.Value = 6;
@@ -42,6 +44,8 @@ namespace InsulaWindowsForms
                     //lst.Add(lstAll[i]);
                     //lst2.Add(lstAll[i]);
                 }
+                int learningNumber = lst.Count;
+                int workingNumber = lst2.Count;
                 double XE = (double)numXE.Value;
                 double before = (double)numCurrentGlucose.Value;
                 double after = (double)numPlanGlucose.Value;
@@ -79,6 +83,35 @@ namespace InsulaWindowsForms
                 dataGridView1.ColumnCount = 6;
                 dataGridView1.ColumnHeadersVisible = true;
 
+
+                Excel ex = new Excel();
+                //ex.OpenDocument("Дневник");
+                //ex.OpenDocument("Дневник #1.xlsx");
+                ex.NewDocument();
+                ex.SetValue("A1", "Обучающая выборка");
+
+                ex.SetValue("A2", "Дата");
+                ex.SetValue("B2", "Время");
+                ex.SetValue("C2", "ХЕ");
+                ex.SetValue("D2", "Сахар до еды");
+                ex.SetValue("E2", "Сахар после еды");
+                ex.SetValue("F2", "Инсулин");
+                    ex.SetValue("G1", "Метод классификации");
+                ex.SetValue("G2", "Алгоритм k-ближайших соседей");
+                    ex.SetValue("H1", "Простая пошаговая регрессия");
+                ex.SetValue("H2", "Линейная");
+                ex.SetValue("I2", "Полином");
+                ex.SetValue("J2", "Синусоида");
+                ex.SetValue("K2", "Гармонический ряд синусоид");
+                    ex.SetValue("L1", "Множественная регрессия");
+                ex.SetValue("L2", "Линейная");
+                ex.SetValue("M2", "Синусоида");
+                ex.SetValue("N2", "Гармонический ряд синусоид");
+                ex.SetValue("O2", "QR-алгоритм");
+                ex.SetValue("P2", "Логистическая");
+                ex.SetValue("Q2", "Все алгоритмы");
+
+
                 dataGridView1.Columns[0].Name = "Time";
                 dataGridView1.Columns[1].Name = "XE";
                 dataGridView1.Columns[2].Name = "Glucose before meal";
@@ -86,8 +119,18 @@ namespace InsulaWindowsForms
                 dataGridView1.Columns[4].Name = "Dose";
                 dataGridView1.Columns[5].Name = "Euclidean distance";
 
+                int strokaNumber = 3;
                 foreach (Fact f in lst)
-                   dataGridView1.Rows.Add(new string[] { f.DateTime.TimeOfDay.ToString(), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), Math.Round(f.Coef,2).ToString() });
+                {
+                    dataGridView1.Rows.Add(new string[] { f.DateTime.TimeOfDay.ToString(), f.XE.ToString(), f.Before.ToString(), f.After.ToString(), f.Dose.ToString(), Math.Round(f.Coef, 2).ToString() });
+                    ex.SetValue("A" + strokaNumber, f.DateTime.ToString());
+                    ex.SetValue("B" + strokaNumber.ToString(), f.DateTime.TimeOfDay.ToString());
+                    ex.SetValue("C" + strokaNumber.ToString(), f.XE.ToString());
+                    ex.SetValue("D" + strokaNumber.ToString(), f.Before.ToString());
+                    ex.SetValue("E" + strokaNumber.ToString(), f.After.ToString());
+                    ex.SetValue("F" + strokaNumber.ToString(), f.Dose.ToString());
+                    strokaNumber++;
+                }
                 for (int i = 0; i < numNeighbors; i++)
                 {
                    dataGridView1.Rows[i].DefaultCellStyle.ForeColor = Color.Blue;
@@ -126,8 +169,8 @@ namespace InsulaWindowsForms
 
                 Func<double, double> harmonicCombinationXE = Fit.LinearCombinationFunc(xdataXE, ydataXE,
                 x => 1,
-                x => SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * x)),
-                x => SpecialFunctions.GeneralHarmonic(100, Math.Cos(omega * x)));
+                x => SpecialFunctions.GeneralHarmonic(1000, Math.Sin(omega * x)),
+                x => SpecialFunctions.GeneralHarmonic(1000, Math.Cos(omega * x)));
                 double goodnessHarmonicCombinationXE = GoodnessOfFit.RSquared(xdataXE.Select(x => sinusoidalCombinationXE(x)), ydataXE);
 
                 double exampleLXE = lineXE(13.0);
@@ -218,8 +261,8 @@ namespace InsulaWindowsForms
                 xdataGlucose,
                 ydataGlucose,
                 x => 1,
-                x => SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * x)),
-                x => SpecialFunctions.GeneralHarmonic(10, Math.Cos(omega * x)));
+                x => SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * x)),
+                x => SpecialFunctions.GeneralHarmonic(100, Math.Cos(omega * x)));
                 double goodnessHarmonicCombinationGlucose = GoodnessOfFit.RSquared(xdataGlucose.Select(x => harmonicCombinationGlucose(x)), ydataGlucose);
 
 
@@ -356,8 +399,18 @@ namespace InsulaWindowsForms
                 int successKNN = 0;
                 List<double> sumKNN = new List<double>();
                 List<double> ans = new List<double>();
+                ex.SetValue("A"+ strokaNumber.ToString(), "Выборка для валидации");
+                strokaNumber++;
+                int strNumber = strokaNumber;
+
                 foreach (var it in lst2)
                 {
+                    ex.SetValue("A" + strNumber, it.DateTime.ToString());
+                    ex.SetValue("B" + strNumber.ToString(), it.DateTime.TimeOfDay.ToString());
+                    ex.SetValue("C" + strNumber.ToString(), it.XE.ToString());
+                    ex.SetValue("D" + strNumber.ToString(), it.Before.ToString());
+                    ex.SetValue("E" + strNumber.ToString(), it.After.ToString());
+                    ex.SetValue("F" + strNumber.ToString(), it.Dose.ToString());
                     foreach (Fact item in lst)
                     {
 
@@ -375,10 +428,14 @@ namespace InsulaWindowsForms
                         dose1 += lst1[i].Dose;
                     }
                     dose1 /= 5;
-                    ans.Add((int)dose1);
                     dose1 = Math.Round(dose1, 1);
+                    ans.Add(dose1);
                     sumKNN.Add(Math.Abs(dose1 - it.Dose));
-                    if ((it.Dose == Math.Truncate(dose1)) || (it.Dose == Math.Truncate(dose1) + 1))
+                    dose1 = Math.Round(dose1, 0);
+                    ex.SetValue("G" + strNumber.ToString(), dose1.ToString());
+                    strNumber++;
+                    if (it.Dose == (int)dose1)
+                    //if ((it.Dose == Math.Truncate(dose1)) || (it.Dose == Math.Truncate(dose1) + 1))
                         successKNN++;
                 }
                 double goodnessKNN = GoodnessOfFit.RSquared(ans, lst2.Select(x => x.Dose));
@@ -403,8 +460,8 @@ namespace InsulaWindowsForms
                 d => 1.0,
                 d => SpecialFunctions.Logistic(d[0]),
                 d => SpecialFunctions.Logistic(d[1]),
-                d => SpecialFunctions.GeneralHarmonic(1000, Math.Sin(omega * d[2])),
-                d => SpecialFunctions.GeneralHarmonic(1000, Math.Cos(omega * d[2])),
+                d => SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => SpecialFunctions.GeneralHarmonic(100, Math.Cos(omega * d[2])),
                 d => SpecialFunctions.Logistic(d[3])
                     );
                 double goodnessLog = GoodnessOfFit.RSquared(lst.Select(x => log(new[] { x.DifferenceInGlucose.Value, x.XE, x.Time, x.Before })).ToArray(), lst.Select(x => x.Dose).ToArray());
@@ -424,15 +481,15 @@ namespace InsulaWindowsForms
 
                 Func<Double[], double> linearMultiDimFuncTimeHarmonic = Fit.LinearMultiDimFunc(xykjData, zData,
                 d => 1.0,
-                d => d[0] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])),
-                d => d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])),
-                d => d[0] * d[0] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])),
-                d => d[1] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])),
-                d => d[0] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])),
-                d => d[0] * d[0] * d[0] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])),
-                d => d[1] * d[1] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])),
-                d => d[0] * d[0] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])),
-                d => d[0] * d[1] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])));
+                d => d[0] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => d[0] * d[0] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => d[1] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => d[0] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => d[0] * d[0] * d[0] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => d[1] * d[1] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => d[0] * d[0] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])),
+                d => d[0] * d[1] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])));
                 double goodnessLinearMultiDimFunvTimeHarmonic = GoodnessOfFit.RSquared(lst.Select(x => linearMultiDimFuncTimeHarmonic(new[] { x.DifferenceInGlucose.Value/100, x.XE/100, x.Time })).ToArray(), lst.Select(x => x.Dose).ToArray());
 
 
@@ -452,15 +509,15 @@ namespace InsulaWindowsForms
 
                 Func<Double[], double> linearMultiDimFuncTimeHarmonicBefore = Fit.LinearMultiDimFunc(xykjData, zData,
                 d => 1.0,
-                d => d[0] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3],
-                d => d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3],
-                d => d[0] * d[0] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3],
-                d => d[1] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3],
-                d => d[0] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3],
-                d => d[0] * d[0] * d[0] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3],
-                d => d[1] * d[1] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3],
-                d => d[0] * d[0] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3],
-                d => d[0] * d[1] * d[1] * SpecialFunctions.GeneralHarmonic(10, Math.Sin(omega * d[2])) * d[3]);
+                d => d[0] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3],
+                d => d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3],
+                d => d[0] * d[0] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3],
+                d => d[1] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3],
+                d => d[0] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3],
+                d => d[0] * d[0] * d[0] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3],
+                d => d[1] * d[1] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3],
+                d => d[0] * d[0] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3],
+                d => d[0] * d[1] * d[1] * SpecialFunctions.GeneralHarmonic(100, Math.Sin(omega * d[2])) * d[3]);
                 double goodnessLinearMultiDimFunvTimeHarmonicBefore = GoodnessOfFit.RSquared(lst.Select(x => linearMultiDimFuncTimeHarmonicBefore(new[] { x.DifferenceInGlucose.Value, x.XE, x.Time, x.Before })).ToArray(), lst.Select(x => x.Dose).ToArray());
 
 
@@ -474,7 +531,10 @@ namespace InsulaWindowsForms
 
                 double goodnessHarmonicCombination = GoodnessOfFit.RSquared(lst.Select(x => Math.Round(harmonicCombinationXE(x.Time) * x.XE + harmonicCombinationGlucose(x.Time) * x.DifferenceInGlucose.Value, 0)), lst.Select(x => x.Dose));
 
+                double goodnessKNNHere = goodnessKNN;
 
+                int dataNumber = lst.Count;
+                int successKNNHere = successKNN;
                 int successLine = 0;
                 int successPolynom = 0;
                 int successSinusoidal = 0;
@@ -504,8 +564,13 @@ namespace InsulaWindowsForms
                 foreach (var item in lst)
                 {
                     double examplePull = 0;
-
-                    examplePull += (harmonicCombinationXE(item.Time) * item.XE + (item.Before - item.After) * harmonicCombinationGlucose(item.Time));
+                    int k = 0;
+                    double dos = (harmonicCombinationXE(item.Time) * item.XE + (item.Before - item.After) * harmonicCombinationGlucose(item.Time));
+                    if ((dos != double.NaN) && (dos < 100) && (dos >=0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     int exampleHarmonic = (int)Math.Round(harmonicCombinationXE(item.Time) * item.XE + (item.Before - item.After) * harmonicCombinationGlucose(item.Time), 0);                   
                     sumHarmonic.Add( Math.Abs(item.Dose - (harmonicCombinationXE(item.Time) * item.XE + (item.Before - item.After) * harmonicCombinationGlucose(item.Time))));
                     //int exampleHarmonic = (int)Math.Truncate(harmonicCombinationXE(item.Time) * item.XE + (item.Before - item.After) * harmonicCombinationGlucose(item.Time));
@@ -513,7 +578,12 @@ namespace InsulaWindowsForms
                     //if ((exampleHarmonic == item.Dose) || (exampleHarmonic+1 == item.Dose))
                         successHarmonic++;
 
-                    examplePull += (sinusoidalCombinationXE(item.Time) * item.XE + (item.Before - item.After) * sinusoidalCombinationGlucose(item.Time));
+                    dos = (sinusoidalCombinationXE(item.Time) * item.XE + (item.Before - item.After) * sinusoidalCombinationGlucose(item.Time));
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     int exampleSinusoidal = (int)Math.Round(sinusoidalCombinationXE(item.Time) * item.XE + (item.Before - item.After) * sinusoidalCombinationGlucose(item.Time), 0);
                     //int exampleSinusoidal = (int)Math.Truncate(sinusoidalCombinationXE(item.Time) * item.XE + (item.Before - item.After) * sinusoidalCombinationGlucose(item.Time));
                     sumSinusoidal.Add(Math.Abs(item.Dose - (sinusoidalCombinationXE(item.Time) * item.XE + (item.Before - item.After) * sinusoidalCombinationGlucose(item.Time))));
@@ -521,7 +591,12 @@ namespace InsulaWindowsForms
                     //if ((exampleSinusoidal == item.Dose) || (exampleSinusoidal + 1 == item.Dose))
                         successSinusoidal++;
 
-                    examplePull += (polynomOrder3XE(item.Time) * item.XE + (item.Before - item.After) * polynomOrder3Glucose(item.Time));
+                    dos = (polynomOrder3XE(item.Time) * item.XE + (item.Before - item.After) * polynomOrder3Glucose(item.Time));
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     sumPolynom.Add(Math.Abs(item.Dose - (polynomOrder3XE(item.Time) * item.XE + (item.Before - item.After) * polynomOrder3Glucose(item.Time))));
                     int examplePolynom = (int)Math.Round(polynomOrder3XE(item.Time) * item.XE + (item.Before - item.After) * polynomOrder3Glucose(item.Time), 0);
                     //int examplePolynom = (int)Math.Truncate(polynomOrder3XE(item.Time) * item.XE + (item.Before - item.After) * polynomOrder3Glucose(item.Time));
@@ -529,7 +604,12 @@ namespace InsulaWindowsForms
                     //if ((examplePolynom == item.Dose) || (examplePolynom + 1 == item.Dose))
                         successPolynom++;
 
-                    examplePull += (lineXE(item.Time) * item.XE + (item.Before - item.After) * lineGlucose(item.Time));
+                    dos = (lineXE(item.Time) * item.XE + (item.Before - item.After) * lineGlucose(item.Time));
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     sumLine.Add(Math.Abs(item.Dose - (lineXE(item.Time) * item.XE + (item.Before - item.After) * lineGlucose(item.Time))));
                     int exampleLine = (int)Math.Round(lineXE(item.Time) * item.XE + (item.Before - item.After) * lineGlucose(item.Time), 0);
                     //int exampleLine = (int)Math.Truncate(lineXE(item.Time) * item.XE + (item.Before - item.After) * lineGlucose(item.Time));
@@ -537,7 +617,12 @@ namespace InsulaWindowsForms
                     //if ((exampleLine == item.Dose) || (exampleLine + 1 == item.Dose))
                         successLine++;
 
-                    examplePull += multiDimFunc4(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before });
+                    dos = multiDimFunc4(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before });
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     sumDirectRegressionMethod.Add(Math.Abs(item.Dose - (multiDimFunc4(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }))));
                     int exampleDirectRegressionMethod = (int)Math.Round(multiDimFunc4(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }), 0);
                     //int exampleDirectRegressionMethod = (int)Math.Truncate(multiDimFunc4(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }));
@@ -545,7 +630,12 @@ namespace InsulaWindowsForms
                     //if ((exampleDirectRegressionMethod == item.Dose) || (exampleDirectRegressionMethod + 1 == item.Dose))
                         successDirectRegressionMethod++;
 
-                    examplePull += linearMultiDimFunc(new[] { item.DifferenceInGlucose.Value, item.XE });
+                    dos = linearMultiDimFunc(new[] { item.DifferenceInGlucose.Value, item.XE });
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     sumDirectLinearMultiDimFunc.Add(Math.Abs(item.Dose - (linearMultiDimFunc(new[] { item.DifferenceInGlucose.Value, item.XE }))));
                     int exampleLinearMultiDimFunc = (int)Math.Round(linearMultiDimFunc(new[] {item.DifferenceInGlucose.Value, item.XE }), 0);
                     //int exampleLinearMultiDimFunc = (int)Math.Truncate(linearMultiDimFunc(new[] { item.DifferenceInGlucose.Value, item.XE }));
@@ -553,7 +643,12 @@ namespace InsulaWindowsForms
                     //if ((exampleLinearMultiDimFunc == item.Dose) || (exampleLinearMultiDimFunc + 1 == item.Dose))
                         successDirectLinearMultiDimFunc++;
 
-                    examplePull += linearMultiDimFuncTimeHarmonic(new[] { item.DifferenceInGlucose.Value / 100, item.XE / 100, item.Time });
+                    dos = linearMultiDimFuncTimeHarmonic(new[] { item.DifferenceInGlucose.Value / 100, item.XE / 100, item.Time });
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     sumDirectLinearMultiDimFuncTimeHarmonic.Add(Math.Abs(item.Dose - (linearMultiDimFuncTimeHarmonic(new[] { item.DifferenceInGlucose.Value/100, item.XE/100, item.Time }))));
                     int exampleLinearMultiDimFuncTimeHarmonic = (int)Math.Round(linearMultiDimFuncTimeHarmonic(new[] { item.DifferenceInGlucose.Value/100, item.XE/100, item.Time }), 0);
                     //int exampleLinearMultiDimFuncTimeHarmonic = (int)Math.Truncate(linearMultiDimFuncTimeHarmonic(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time }));
@@ -561,7 +656,12 @@ namespace InsulaWindowsForms
                     //if ((exampleLinearMultiDimFuncTimeHarmonic == item.Dose) || (exampleLinearMultiDimFuncTimeHarmonic + 1 == item.Dose))
                         successDirectLinearMultiDimFuncTimeHarmonic++;
 
-                    examplePull += linearMultiDimFuncTimeSin(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time });
+                    dos = linearMultiDimFuncTimeSin(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time });
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     sumDirectLinearMultiDimFuncTimeSin.Add(Math.Abs(item.Dose - (linearMultiDimFuncTimeSin(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time }))));
                     int exampleLinearMultiDimFuncTimeSin = (int)Math.Round(linearMultiDimFuncTimeSin(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time }), 0);
                     //int exampleLinearMultiDimFuncTimeSin = (int)Math.Truncate(linearMultiDimFuncTimeSin(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time }));
@@ -569,7 +669,12 @@ namespace InsulaWindowsForms
                     //if ((exampleLinearMultiDimFuncTimeSin == item.Dose) || (exampleLinearMultiDimFuncTimeSin + 1 == item.Dose))
                         successDirectLinearMultiDimFuncTimeSin++;
 
-                    examplePull += linearMultiDimFuncTimeHarmonicBefore(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before });
+                    dos = linearMultiDimFuncTimeHarmonicBefore(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before });
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     sumDirectLinearMultiDimFuncTimeHarmonicBefore.Add(Math.Abs(item.Dose - (linearMultiDimFuncTimeHarmonicBefore(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }))));
                     int exampleLinearMultiDimFuncTimeHarmonicBefore = (int)Math.Round(linearMultiDimFuncTimeHarmonicBefore(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }), 0);
                     //int exampleLinearMultiDimFuncTimeHarmonicBefore = (int)Math.Truncate(linearMultiDimFuncTimeHarmonicBefore(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }));
@@ -577,25 +682,42 @@ namespace InsulaWindowsForms
                     //if ((exampleLinearMultiDimFuncTimeHarmonicBefore == item.Dose) || (exampleLinearMultiDimFuncTimeHarmonicBefore + 1 == item.Dose))
                         successDirectLinearMultiDimFuncTimeHarmonicBefore++;
 
-                    examplePull += sumKNN[g];
-                    g++;
-                    sumPull.Add(Math.Abs(item.Dose - examplePull/10));
-                    //examplePull = Math.Round(examplePull/10, 0);
-                    examplePull = Math.Truncate(examplePull / 10);
-                    if (((int)examplePull == item.Dose) || ((int)examplePull + 1 == item.Dose))
-                    //if ((int)examplePull == item.Dose)
-                        successPull++;
-
-                    //examplePull += log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before });
+                    dos = log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before });
+                    if ((dos != double.NaN) && (dos < 100) && (dos >= 0))
+                    {
+                        examplePull += dos;
+                        k++;
+                    }
                     sumLog.Add(Math.Abs(item.Dose - (log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }))));
                     int exampleLog = (int)Math.Round(log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }), 0);
                     //int exampleLog = (int)Math.Truncate(log(new[] { item.DifferenceInGlucose.Value, item.XE, item.Time, item.Before }));
                     if (exampleLog == item.Dose)
                         //if ((exampleLog == item.Dose) || (exampleLog + 1 == item.Dose))
                         successLog++;
+
+                    examplePull += sumKNN[g];
+                    k++;
+                    g++;
+                    sumPull.Add(Math.Abs(item.Dose - examplePull/k));
+                    examplePull = Math.Round(examplePull/k, 0);
+                    //examplePull = Math.Truncate(examplePull / k);
+                    //if (((int)examplePull == item.Dose) || ((int)examplePull + 1 == item.Dose))
+                    if ((int)examplePull == item.Dose)
+                        successPull++;
+
+                    ex.SetValue("H" + strokaNumber.ToString(), exampleLine.ToString());
+                    ex.SetValue("I" + strokaNumber.ToString(), examplePolynom.ToString());
+                    ex.SetValue("J" + strokaNumber.ToString(), exampleSinusoidal.ToString());
+                    ex.SetValue("K" + strokaNumber.ToString(), exampleHarmonic.ToString());
+                    ex.SetValue("L" + strokaNumber.ToString(), exampleLinearMultiDimFunc.ToString());
+                    ex.SetValue("M" + strokaNumber.ToString(), exampleLinearMultiDimFuncTimeSin.ToString());
+                    ex.SetValue("N" + strokaNumber.ToString(), exampleLinearMultiDimFuncTimeHarmonic.ToString());
+                    ex.SetValue("O" + strokaNumber.ToString(), exampleDirectRegressionMethod.ToString());
+                    ex.SetValue("P" + strokaNumber.ToString(), exampleLog.ToString());
+                    ex.SetValue("Q" + strokaNumber.ToString(), examplePull.ToString());
+                    strokaNumber++;
                 }
 
-                int k = lst.Count;
                 double devKNN = Statistics.StandardDeviation(sumKNN);
                 double devLine = Statistics.StandardDeviation(sumLine);
                 double devPolynom = Statistics.StandardDeviation(sumPolynom);
@@ -635,38 +757,54 @@ namespace InsulaWindowsForms
                 double normaLog = 0;
                 double normaPull = 0;
 
-                for (int i = 0; i < k; i++)
-                {
+                for (int i = 0; i < dataNumber; i++)
+                    if (lst[i].Dose != 0)
+                    {
+                        normaKNN += sumKNN[i] / lst[i].Dose;
+                        normaLine += sumLine[i] / lst[i].Dose;
+                        normaPolynom += sumPolynom[i] / lst[i].Dose;
+                        normaSinusoidal += sumSinusoidal[i] / lst[i].Dose;
+                        normaHarmonic += sumHarmonic[i] / lst[i].Dose;
+                        normaDirectLinearMultiDimFunc += sumDirectLinearMultiDimFunc[i] / lst[i].Dose;
+                        normaDirectLinearMultiDimFuncTimeSin += sumDirectLinearMultiDimFuncTimeSin[i] / lst[i].Dose;
+                        normaDirectLinearMultiDimFuncTimeHarmonic += sumDirectLinearMultiDimFuncTimeHarmonic[i] / lst[i].Dose;
+                        normaDirectLinearMultiDimFuncTimeHarmonicBefore += sumDirectLinearMultiDimFuncTimeHarmonicBefore[i] / lst[i].Dose;
+                        normaDirectRegressionMethod += sumDirectRegressionMethod[i] / lst[i].Dose;
+                        normaLog += sumLog[i] / lst[i].Dose;
+                        normaPull += sumPull[i] / lst[i].Dose;
+                    }
 
-                     normaKNN += sumKNN[i]/lst[i].Dose;
-                     normaLine += sumLine[i] / lst[i].Dose;
-                    normaPolynom += sumPolynom[i] / lst[i].Dose;
-                    normaSinusoidal += sumSinusoidal[i] / lst[i].Dose;
-                    normaHarmonic += sumHarmonic[i] / lst[i].Dose;
-                    normaDirectLinearMultiDimFunc += sumDirectLinearMultiDimFunc[i] / lst[i].Dose;
-                    normaDirectLinearMultiDimFuncTimeSin += sumDirectLinearMultiDimFuncTimeSin[i] / lst[i].Dose;
-                    normaDirectLinearMultiDimFuncTimeHarmonic += sumDirectLinearMultiDimFuncTimeHarmonic[i] / lst[i].Dose;
-                    normaDirectLinearMultiDimFuncTimeHarmonicBefore += sumDirectLinearMultiDimFuncTimeHarmonicBefore[i] / lst[i].Dose;
-                    normaDirectRegressionMethod += sumDirectRegressionMethod[i] / lst[i].Dose;
-                    normaLog += sumLog[i] / lst[i].Dose; 
-                    normaPull += sumPull[i] / lst[i].Dose; 
-                }
+                normaKNN /= dataNumber;
+                normaLine /= dataNumber;
+                normaPolynom /= dataNumber;
+                normaSinusoidal /= dataNumber;
+                normaHarmonic /= dataNumber;
+                normaDirectLinearMultiDimFunc /= dataNumber;
+                normaDirectLinearMultiDimFuncTimeSin /= dataNumber;
+                normaDirectLinearMultiDimFuncTimeHarmonic /= dataNumber;
+                normaDirectLinearMultiDimFuncTimeHarmonicBefore /= dataNumber;
+                normaDirectRegressionMethod /= dataNumber;
+                normaLog /= dataNumber;
+                normaPull /= dataNumber;
 
-                 normaKNN /= k;
-                 normaLine /= k;
-                normaPolynom /= k;
-                normaSinusoidal /= k;
-                normaHarmonic /= k;
-                normaDirectLinearMultiDimFunc /= k;
-                normaDirectLinearMultiDimFuncTimeSin /= k;
-                normaDirectLinearMultiDimFuncTimeHarmonic /= k;
-                normaDirectLinearMultiDimFuncTimeHarmonicBefore /= k;
-                normaDirectRegressionMethod /= k;
-                normaLog /= k;
-                normaPull /= k;
+                int successKNNHere1 = sumKNN.Where(x => x <1.5).Count();
+                int successLine1 = sumLine.Where(x => x < 1.5).Count();
+                int successPolynom1 = sumPolynom.Where(x => x < 1.5).Count();
+                int successSinusoidal1 = sumSinusoidal.Where(x => x < 1.5).Count();
+                int successHarmonic1 = sumHarmonic.Where(x => x < 1.5).Count();
+                int successDirectLinearMultiDimFunc1 = sumDirectLinearMultiDimFunc.Where(x => x < 1.5).Count();
+                int successDirectLinearMultiDimFuncTimeSin1 = sumDirectLinearMultiDimFuncTimeSin.Where(x => x < 1.5).Count();
+                int successDirectLinearMultiDimFuncTimeHarmonic1 = sumDirectLinearMultiDimFuncTimeHarmonic.Where(x => x < 1.5).Count();
+                int successDirectLinearMultiDimFuncTimeHarmonicBefore1 = sumDirectLinearMultiDimFuncTimeHarmonicBefore.Where(x => x < 1.5).Count();
+                int successDirectRegressionMethod1 = sumDirectRegressionMethod.Where(x => x < 1.5).Count();
+                int successLog1 = sumLog.Where(x => x < 1.5).Count();
+                int successPull1 = sumPull.Where(x => x < 1.5).Count();
 
                 double example = harmonicCombinationXE(time.TotalMinutes/60) * XE + (before - after) * harmonicCombinationGlucose(time.TotalMinutes / 60);
                 tbDose.Text = ((int)example).ToString();
+
+                ex.SaveDocument("Дневник " + patient.Name + ".xlsx");
+                ex.CloseDocument();
             }
             catch (Exception ex)
             {
